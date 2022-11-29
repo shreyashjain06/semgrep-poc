@@ -7,7 +7,7 @@ on:
     - .github/workflows/test.yml
 name: Semgrep Scan
 jobs:
-  semgrep:
+  semg:
     name: Scan
     runs-on: ubuntu-20.04
     container:
