@@ -1,6 +1,6 @@
 import jwt
 
-secret_const = "this-is-a-secret"
+secret_const = "this-is-a-secret-q"
 
 
 def bad1():
