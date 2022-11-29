@@ -4,7 +4,7 @@ on:
     branches:
     - main
     paths:
-    - .github/workflows/semgrep.yml
+    - .github/workflows/test.yml
 name: Semgrep Scan
 jobs:
   semgrep:
