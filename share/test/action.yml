@@ -1,0 +1,15 @@
+name: 'Code review'
+description: 'Code review'
+inputs:
+  run-semgrep:
+    description: 'Run semgrep scan'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - id: semgrep
+      run: |
+        if [[ ${{ inputs.run-semgrep }} == '1' ]]; then
+          semgrep ci
+        fi
+      shell: bash
