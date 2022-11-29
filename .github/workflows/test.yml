@@ -5,7 +5,7 @@ on:
     - main
     paths:
     - .github/workflows/test.yml
-name: Semgrep Scan
+name: test
 jobs:
   semg:
     name: Scan
@@ -27,7 +27,7 @@ jobs:
       with:
         python-version: 3.8
     - name: semgrep
-      uses: ./share/gh-actions
+      uses: ./share/test
       with:
         run-semgrep: 1
       env:
