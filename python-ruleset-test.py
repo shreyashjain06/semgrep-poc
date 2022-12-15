@@ -1,4 +1,4 @@
-import csv
+import defusedcsv
 import django
 import io
 
@@ -7,7 +7,7 @@ from util import chroot
 
 def a(request):
     stream = io.StringIO()
-    writer = csv.writer(stream)
+    writer = defusedcsv.writer(stream)
     data = get_data()
     title = request.POST.get("title")
     title_row = title + ("," * len(data[0]) - 1)
@@ -22,6 +22,6 @@ def a(request):
 def ok():
     with open("data.csv") as fin:
         # ok: csv-writer-injection
-        reader = csv.reader(fin)
+        reader = defusedcsv.reader(fin)
         lines = [line for line in reader]
     return '\n'.join(lines)
