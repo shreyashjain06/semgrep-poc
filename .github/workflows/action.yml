@@ -1,0 +1,29 @@
+name: 'Code Review'
+on:
+  pull_request_target:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+jobs: 
+  code-review:
+    name: code review
+    runs-on: ubuntu-latest
+    env:
+      SERVICE: iris
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Review code and run unit tests
+        id: review-code
+        uses: ./gh-actions/code-review
+        with:
+          service: ${{ env.SERVICE }}
+          user: ${{ secrets.GH_USERNAME }}
+          password: ${{ secrets.GH_ACCESS_TOKEN }}
+          unit-tests: 1
+      - name: Exit on unit test failure
+        if: ${{ steps.review-code.outputs.unit-tests-status != 0 }}
+        run: exit ${{ steps.review-code.outputs.unit-tests-status }}
