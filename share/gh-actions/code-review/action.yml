@@ -1,0 +1,63 @@
+name: 'Code review'
+description: 'Code review'
+inputs:
+  service:
+    description: 'Review code for service'
+    required: true
+  user:
+    description: 'Github user'
+    required: true
+  password:
+    description: 'Github user password'
+    required: true
+  unit-tests:
+    description: 'Run unit tests'
+    required: false
+outputs:
+  unit-tests-status:
+    description: 'Status of unit tests'
+    value: ${{ steps.run-unit-tests.outputs.rc }}
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        SRV_HOME=$(pwd)
+        echo "NVM_DIR=${SRV_HOME}/.nvm" >> $GITHUB_ENV
+      shell: bash
+    - run: curl -sfL https://raw.githubusercontent.com/reviewdog/nightly/master/install.sh | sh -s
+      working-directory: .
+      shell: bash
+    - run: |
+        mkdir .nvm
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh | bash
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm install 14.21.2
+        nvm use
+        npm install
+      working-directory: .
+      shell: bash
+    - run: |
+        echo "Reviewing code ..."
+        ./node_modules/.bin/eslint  -c .eslintrc . | ./bin/reviewdog -f=eslint -diff="git diff FETCH_HEAD" -reporter=github-pr-review -fail-on-error
+      working-directory: .
+      shell: bash
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ inputs.password }}
+    - id: run-unit-tests
+      run: |
+        if [[ ${{ inputs.unit-tests }} == '1' ]]; then
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          nvm install 14.21.2
+          nvm use
+          set +e
+          echo "Running unit tests ..."
+          npm test --watchAll=false --coverage --reporters='jest-junit' --coverageDirectory=${TESTPATH}
+          rc=$?
+          echo "::set-output name=rc::$rc"
+        fi
+      working-directory: .
+      shell: bash
+      env:
+        TESTPATH: ./tmp/tests/
