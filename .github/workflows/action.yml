@@ -16,7 +16,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Review code and run unit tests
         id: review-code
-        uses: ./gh-actions/code-review
+        uses: ./share/gh-actions/code-review
         with:
           service: ${{ env.SERVICE }}
           user: ${{ secrets.GH_USERNAME }}
