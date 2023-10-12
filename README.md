@@ -1,3 +1,1 @@
 # semgrep-poc
-
-test
