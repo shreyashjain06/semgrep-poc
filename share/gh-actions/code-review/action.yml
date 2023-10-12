@@ -33,7 +33,7 @@ runs:
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
         nvm install 14.21.2
-        nvm use
+        nvm use 14.21.2
         npm install
       working-directory: .
       shell: bash
